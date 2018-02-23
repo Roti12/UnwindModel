@@ -50,6 +50,10 @@ public class ModelCreator {
 
     }
 
+    public boolean checkModelForFormula() {
+        return false;
+    }
+
     public static void main(String [] args) {
         Model model = new Model("Model-1");
         ModelCreator createModel = new ModelCreator(model);

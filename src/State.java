@@ -4,6 +4,7 @@ import java.util.ArrayList;
 public class State {
 
     private String name;
+    private String atom;
     private ArrayList<AccessibilityRelation> relations = new ArrayList<>();
 
     public State(String name) {
