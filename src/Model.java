@@ -24,10 +24,6 @@ public class Model {
         return statesInModel;
     }
 
-    public void addAgents(Agent agent) {
-
-    }
-
     public ArrayList<Agent> getAgents() {
         return agents;
     }

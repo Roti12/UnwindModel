@@ -59,6 +59,4 @@ public class State {
     public ArrayList<AccessibilityRelation> getRelations() {
         return relations;
     }
-
-    public ArrayList<>
 }
