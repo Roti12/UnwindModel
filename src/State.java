@@ -6,9 +6,15 @@ public class State {
     private String name;
     private String atom;
     private ArrayList<AccessibilityRelation> relations = new ArrayList<>();
+    private boolean label = false;
 
     public State(String name) {
         this.name = name;
+    }
+
+    public State(String name, String atom) {
+        this.name = name;
+        this.atom = atom;
     }
 
     public State(String name, ArrayList<AccessibilityRelation> relations) {
@@ -39,6 +45,11 @@ public class State {
         for(int i = 0; i < relation.size(); i++) {
             relations.add(relation.get(i));
         }
+    }
+
+    public boolean checkAtomTrueInState(String string) {
+        if(this.getName().equals(string)) return true;
+        return false;
     }
 
     public String getName() {

@@ -5,18 +5,25 @@ public class ModelCreator {
 
 
     private Model model;
-
+    /*
+    IMPORTANT NOTE!!!!
+    MAYBE JUST VALIDATE FORMULAS IN BASIC EPISTEMIC MODELS???
+     */
     public ModelCreator(Model model) {
+
+        Agent a = new Agent("Ann");
+        Agent b = new Agent("Bill");
+
         this.model = model;
-        State state0 = new State("state-0");
+        State state0 = new State("state-0", "p");
         State state1 = new State("state-1");
         State state2 = new State("state-2");
 
         ArrayList<AccessibilityRelation> relations = new ArrayList<>();
 
-        AccessibilityRelation rel0 = new AccessibilityRelation(state0);
-        AccessibilityRelation rel1 = new AccessibilityRelation(state1);
-        AccessibilityRelation rel2 = new AccessibilityRelation(state2);
+        AccessibilityRelation rel0 = new AccessibilityRelation(state0,a);
+        AccessibilityRelation rel1 = new AccessibilityRelation(state1, b);
+        AccessibilityRelation rel2 = new AccessibilityRelation(state2, a);
         relations.add(rel0);
         relations.add(rel1);
         relations.add(rel2);
