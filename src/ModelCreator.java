@@ -69,7 +69,7 @@ public class ModelCreator {
         return false;
     }
 
-    public boolean checkModelForFormula(String string) {
+    public boolean checkModelForFormula(State state, String string) {
         return false;
     }
 

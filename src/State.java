@@ -22,6 +22,15 @@ public class State {
         addAccessibilityRelationsByList(relations);
     }
 
+    public boolean hasRelationTo(State state) {
+        ArrayList<State> relations = getRelationsStates();
+
+        for(int i = 0; i < relations.size(); i++) {
+            if(relations.get(i) == state) return true;
+        }
+        return false;
+    }
+
     public ArrayList<State> getRelationsStates() {
         ArrayList<State> relationsForState = new ArrayList<>();
 
@@ -48,7 +57,7 @@ public class State {
     }
 
     public boolean checkAtomTrueInState(String string) {
-        if(this.getName().equals(string)) return true;
+        if(this.getName().toLowerCase().equals(string)) return true;
         return false;
     }
 
