@@ -28,7 +28,7 @@ public class Model {
         return agents;
     }
 
-    public void AddAgents(Agent a) {
+    public void addAgents(Agent a) {
         this.agents.add(a);
     }
 }
