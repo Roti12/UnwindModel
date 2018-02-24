@@ -15,4 +15,8 @@ public class AccessibilityRelation {
     public State getState() {
         return state;
     }
+
+    public Agent getAgent() {
+        return agent;
+    }
 }

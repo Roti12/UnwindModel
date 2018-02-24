@@ -10,11 +10,14 @@ public class ModelCreator {
     MAYBE JUST VALIDATE FORMULAS IN BASIC EPISTEMIC MODELS???
      */
     public ModelCreator(Model model) {
+        this.model = model;
 
         Agent a = new Agent("Ann");
         Agent b = new Agent("Bill");
 
-        this.model = model;
+        model.addAgents(a);
+        model.addAgents(b);
+
         State state0 = new State("state-0", "p");
         State state1 = new State("state-1");
         State state2 = new State("state-2");
@@ -57,7 +60,16 @@ public class ModelCreator {
 
     }
 
-    public boolean checkModelForFormula() {
+    public boolean checkAgentRelationForState(State state, String string) {
+        String agentName = string.toLowerCase();
+        for(int i = 0; i < state.getRelationsStates().size(); i++) {
+            if(state.getRelations().get(i).getAgent().getName().equals(agentName)) return true;
+        }
+
+        return false;
+    }
+
+    public boolean checkModelForFormula(String string) {
         return false;
     }
 
@@ -65,5 +77,7 @@ public class ModelCreator {
         Model model = new Model("Model-1");
         ModelCreator createModel = new ModelCreator(model);
         createModel.unwind();
+        String str = "ANN KNOWS";
+        System.out.println(str.substring(0, str.length() - 6));
     }
 }

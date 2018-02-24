@@ -55,4 +55,10 @@ public class State {
     public String getName() {
         return name;
     }
+
+    public ArrayList<AccessibilityRelation> getRelations() {
+        return relations;
+    }
+
+    public ArrayList<>
 }

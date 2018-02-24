@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Model {
@@ -5,6 +6,7 @@ public class Model {
     private int numberOfStates = 0;
     private String name;
     private ArrayList<State> statesInModel = new ArrayList<>();
+    private ArrayList<Agent> agents = new ArrayList<>();
 
     public Model(String name) {
         this.name = name;
@@ -20,5 +22,17 @@ public class Model {
 
     public ArrayList<State> getStatesInModel() {
         return statesInModel;
+    }
+
+    public void addAgents(Agent agent) {
+
+    }
+
+    public ArrayList<Agent> getAgents() {
+        return agents;
+    }
+
+    public void AddAgents(Agent a) {
+        this.agents.add(a);
     }
 }
