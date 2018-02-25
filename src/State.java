@@ -57,12 +57,18 @@ public class State {
     }
 
     public boolean checkAtomTrueInState(String string) {
-        if(this.getName().toLowerCase().equals(string)) return true;
+        String atomInput = string.toLowerCase();
+        if(this.getAtom().toLowerCase().equals(atomInput)) return true;
         return false;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getAtom() {
+        if(this.atom == null || this.atom.equals("")) atom = "undefined";
+        return this.atom;
     }
 
     public ArrayList<AccessibilityRelation> getRelations() {

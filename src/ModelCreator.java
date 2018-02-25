@@ -4,11 +4,8 @@ import java.util.ArrayList;
 public class ModelCreator {
 
 
-    private Model model;
-    /*
-    IMPORTANT NOTE!!!!
-    MAYBE JUST VALIDATE FORMULAS IN BASIC EPISTEMIC MODELS???
-     */
+    private static Model model;
+
     public ModelCreator(Model model) {
         this.model = model;
 
@@ -19,19 +16,24 @@ public class ModelCreator {
         model.addAgents(b);
 
         State state0 = new State("state-0", "p");
-        State state1 = new State("state-1");
-        State state2 = new State("state-2");
+        State state1 = new State("state-1", "p");
+        State state2 = new State("state-2", "q");
 
         ArrayList<AccessibilityRelation> relations = new ArrayList<>();
 
         AccessibilityRelation rel0 = new AccessibilityRelation(state0,a);
         AccessibilityRelation rel1 = new AccessibilityRelation(state1, b);
         AccessibilityRelation rel2 = new AccessibilityRelation(state2, a);
+        AccessibilityRelation rel3 = new AccessibilityRelation(state0, b);
+        AccessibilityRelation rel4 = new AccessibilityRelation(state1, a);
+
         relations.add(rel0);
         relations.add(rel1);
         relations.add(rel2);
+        relations.add(rel3);
 
         state0.addAccessibilityRelationsByList(relations);
+        state1.addAccessibilityRelation(rel4);
 
         model.addState(state0);
         model.addState(state1);
@@ -60,24 +62,56 @@ public class ModelCreator {
 
     }
 
-    public boolean checkAgentRelationForState(State state, String string) {
-        String agentName = string.toLowerCase();
-        for(int i = 0; i < state.getRelationsStates().size(); i++) {
-            if(state.getRelations().get(i).getAgent().getName().equals(agentName)) return true;
-        }
+    public static boolean checkModelForFormula(State state, String string) {
+        String formula = string.toLowerCase();
 
+        if(state == null) return false;
+        if(formula == null || formula.equals("")) return false;
+
+        //Single atoms only
+        //if((!formula.contains("or")) || (!formula.contains("and")) || (!formula.contains("knows"))) {
+          //  return state.checkAtomTrueInState(string);
+        //}
+        //ATOMS SEPERATED BY OR
+        if(formula.contains("or")) {
+            return true;
+        }
+        //ATOMS SEPERATED BY AND
+        if(formula.contains("and")) {
+            return true;
+        }
+        //ANN KNOWS SOMETHING
+        if(formula.contains("knows")) {
+            String agent = formula.substring(0, formula.length() - 8);
+            String atom = formula.substring(10).trim();
+            return checkAgentKnowledge(agent, state, atom);
+        }
         return false;
     }
 
-    public boolean checkModelForFormula(State state, String string) {
-        return false;
+    public static boolean checkAgentKnowledge(String agent, State state, String atom) {
+        Agent a = model.findAgentInModel(agent);
+        if(a == null) return false;
+        ArrayList<State> statesToCheckForAgent = new ArrayList<>();
+
+        for(int i = 0; i < state.getRelationsStates().size(); i++) {
+            if(model.checkAgentRelationForStateByObject(state.getRelationsStates().get(i), a)) {
+                statesToCheckForAgent.add(state.getRelationsStates().get(i));
+            }
+        }
+
+        for(int i = 0; i < statesToCheckForAgent.size(); i++) {
+            if(!(state.getRelationsStates().get(i).checkAtomTrueInState(atom))) return false;
+        }
+
+        return true;
     }
 
     public static void main(String [] args) {
         Model model = new Model("Model-1");
         ModelCreator createModel = new ModelCreator(model);
-        createModel.unwind();
-        String str = "ANN KNOWS";
-        System.out.println(str.substring(0, str.length() - 6));
+        //createModel.unwind();
+        System.out.println(checkModelForFormula(model.getStatesInModel().get(0), "bill knows p"));
+        //System.out.println(checkModelForFormula(model.getStatesInModel().get(0), "p and q"));
     }
 }
