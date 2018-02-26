@@ -33,7 +33,6 @@ public class ModelCreator {
         relations.add(rel4);
 
         state0.addAccessibilityRelationsByList(relations);
-        state1.addAccessibilityRelation(rel4);
 
         model.addState(state0);
         model.addState(state1);
@@ -47,7 +46,10 @@ public class ModelCreator {
 
         if(unwindedModel.isEmpty()) System.out.println("Model has no states");
 
-        for(int i = 0; i < 10; i++) {
+        System.out.println("Updated model: ");
+        System.out.println();
+
+        for(int i = 0; i < 100; i++) {
             ArrayList<State> relations = unwindedModel.get(i).getRelationsStates();
             if(relations != null) {
                 for(int j = 0; j < relations.size(); j++){
@@ -57,12 +59,12 @@ public class ModelCreator {
         }
 
         for(int i = 0; i < unwindedModel.size(); i++) {
-            System.out.println(unwindedModel.get(i).getName());
+            System.out.println(unwindedModel.get(i).getName() + " number: " + i);
         }
 
     }
 
-    public static boolean checkModelForFormula(State state, String string) {
+    public static boolean checkModelForFormula(State state, String string, boolean negation) {
         String formula = string.toLowerCase();
 
         if(state == null) return false;
@@ -70,12 +72,16 @@ public class ModelCreator {
 
         //Single atoms only
         if(!((formula.contains("or")) || (formula.contains("and")) || (formula.contains("knows")) ||(formula.contains("considers")))) {
+            if(negation) return !(state.checkAtomTrueInState(string));
             return state.checkAtomTrueInState(string);
         }
         //ATOMS SEPERATED BY OR
         if(formula.contains("or")) {
             String leftAtom = formula.substring(0,1);
             String rightAtom = formula.substring(formula.length()-1);
+            if(negation) {
+                return !((state.checkAtomTrueInState(leftAtom)) || (state.checkAtomTrueInState(rightAtom)));
+            }
             if((state.checkAtomTrueInState(leftAtom)) || (state.checkAtomTrueInState(rightAtom)))return true;
 
             return false;
@@ -84,6 +90,9 @@ public class ModelCreator {
         if(formula.contains("and")) {
             String leftAtom = formula.substring(0,1);
             String rightAtom = formula.substring(formula.length() - 1);
+            if(negation) {
+                return ((!state.checkAtomTrueInState(leftAtom)) && !(state.checkAtomTrueInState(rightAtom)));
+            }
             if((state.checkAtomTrueInState(leftAtom)) && (state.checkAtomTrueInState(rightAtom))) return true;
 
             return false;
@@ -92,13 +101,18 @@ public class ModelCreator {
         if(formula.contains("implies")) {
             String leftAtom = formula.substring(0, 1);
             String rightAtom = formula.substring(formula.length() - 1);
+            if(negation) {
+                if((state.checkAtomTrueInState(leftAtom)) && !(state.checkAtomTrueInState(rightAtom))) return true;
+            } else return false;
             if((state.checkAtomTrueInState(leftAtom)) && !(state.checkAtomTrueInState(rightAtom))) return false;
+            return true;
         }
 
         //ANN KNOWS SOMETHING
         if(formula.contains("knows")) {
             String agent = formula.substring(0, formula.length() - 8);
             String atom = formula.substring(string.length() - 1);
+            if(negation) return !checkAgentKnowledge(agent, state, atom);
             return checkAgentKnowledge(agent, state, atom);
         }
 
@@ -106,6 +120,7 @@ public class ModelCreator {
         if(formula.contains("considers")) {
             String agent = formula.substring(0, formula.length() - 12);
             String atom = formula.substring(string.length() - 1);
+            if(negation) return !checkAgentConsidersPossibility(agent,state,atom);
             return checkAgentConsidersPossibility(agent, state, atom);
         }
         return false;
@@ -150,10 +165,10 @@ public class ModelCreator {
     public static void main(String [] args) {
         Model model = new Model("Model-1");
         ModelCreator createModel = new ModelCreator(model);
-        //createModel.unwind();
-        //System.out.println(checkModelForFormula(model.getStatesInModel().get(0), "bill knows p"));
-        //System.out.println(checkModelForFormula(model.getStatesInModel().get(0), "p and q"));
-        System.out.println(checkModelForFormula(model.getStatesInModel().get(0), "ann considers q"));
+        createModel.unwind();
+        //System.out.println(checkModelForFormula(model.getStatesInModel().get(0), "bill knows p", false));
+        //System.out.println(checkModelForFormula(model.getStatesInModel().get(0), "p or q", true));
+        //System.out.println(checkModelForFormula(model.getStatesInModel().get(0), "ann considers q", false));
         //System.out.println(model.getStatesInModel().get(1).getRelations());
     }
 }
