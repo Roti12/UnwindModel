@@ -32,14 +32,19 @@ public class Model {
         this.agents.add(a);
     }
 
-    public boolean checkAgentRelationForStateByString(State state, String agent) {
-        String agentName = agent.toLowerCase();
-        if(state.getRelations().isEmpty()) return false;
-        for (int i = 0; i < state.getRelationsStates().size(); i++) {
-            if (state.getRelations().get(i).getAgent().getName().toLowerCase().equals(agentName)) return true;
-        }
+    public ArrayList<State> checkAgentRelationForStateByString(State state, String agent) {
+        ArrayList<State> statesWithAgentRelations = new ArrayList<>();
+        Agent a = findAgentInModel(agent);
+        if(a == null) return null;
+        if((state.getRelationsStates() == null) || (state.getRelationsStates().isEmpty())) return null;
+        String agentName = a.getName().toLowerCase();
 
-        return false;
+        for(int i = 0; i < state.getRelations().size(); i++) {
+            if(state.getRelations().get(i).getAgent().getName().toLowerCase().equals(agentName)) {
+                statesWithAgentRelations.add(state.getRelations().get(i).getState());
+            }
+        }
+        return statesWithAgentRelations;
     }
 
     public ArrayList<State> checkAgentRelationForStateByObject(State stateToCheck, Agent agent) {

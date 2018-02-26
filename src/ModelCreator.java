@@ -69,7 +69,7 @@ public class ModelCreator {
         if(formula == null || formula.equals("")) return false;
 
         //Single atoms only
-        if(!((formula.contains("or")) || (formula.contains("and")) || (formula.contains("knows")))) {
+        if(!((formula.contains("or")) || (formula.contains("and")) || (formula.contains("knows")) ||(formula.contains("considers")))) {
             return state.checkAtomTrueInState(string);
         }
         //ATOMS SEPERATED BY OR
@@ -153,7 +153,7 @@ public class ModelCreator {
         //createModel.unwind();
         //System.out.println(checkModelForFormula(model.getStatesInModel().get(0), "bill knows p"));
         //System.out.println(checkModelForFormula(model.getStatesInModel().get(0), "p and q"));
-        //System.out.println(checkModelForFormula(model.getStatesInModel().get(0), "ann considers q"));
+        System.out.println(checkModelForFormula(model.getStatesInModel().get(0), "ann considers q"));
         //System.out.println(model.getStatesInModel().get(1).getRelations());
     }
 }
