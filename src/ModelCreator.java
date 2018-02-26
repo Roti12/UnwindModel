@@ -1,4 +1,3 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class ModelCreator {
@@ -31,6 +30,7 @@ public class ModelCreator {
         relations.add(rel1);
         relations.add(rel2);
         relations.add(rel3);
+        relations.add(rel4);
 
         state0.addAccessibilityRelationsByList(relations);
         state1.addAccessibilityRelation(rel4);
@@ -69,22 +69,44 @@ public class ModelCreator {
         if(formula == null || formula.equals("")) return false;
 
         //Single atoms only
-        //if((!formula.contains("or")) || (!formula.contains("and")) || (!formula.contains("knows"))) {
-          //  return state.checkAtomTrueInState(string);
-        //}
+        if(!((formula.contains("or")) || (formula.contains("and")) || (formula.contains("knows")))) {
+            return state.checkAtomTrueInState(string);
+        }
         //ATOMS SEPERATED BY OR
         if(formula.contains("or")) {
-            return true;
+            String leftAtom = formula.substring(0,1);
+            String rightAtom = formula.substring(formula.length()-1);
+            if((state.checkAtomTrueInState(leftAtom)) || (state.checkAtomTrueInState(rightAtom)))return true;
+
+            return false;
         }
         //ATOMS SEPERATED BY AND
         if(formula.contains("and")) {
-            return true;
+            String leftAtom = formula.substring(0,1);
+            String rightAtom = formula.substring(formula.length() - 1);
+            if((state.checkAtomTrueInState(leftAtom)) && (state.checkAtomTrueInState(rightAtom))) return true;
+
+            return false;
         }
+
+        if(formula.contains("implies")) {
+            String leftAtom = formula.substring(0, 1);
+            String rightAtom = formula.substring(formula.length() - 1);
+            if((state.checkAtomTrueInState(leftAtom)) && !(state.checkAtomTrueInState(rightAtom))) return false;
+        }
+
         //ANN KNOWS SOMETHING
         if(formula.contains("knows")) {
             String agent = formula.substring(0, formula.length() - 8);
-            String atom = formula.substring(10).trim();
+            String atom = formula.substring(string.length() - 1);
             return checkAgentKnowledge(agent, state, atom);
+        }
+
+        //ANN CONSIDERS POSSIBLE
+        if(formula.contains("considers")) {
+            String agent = formula.substring(0, formula.length() - 12);
+            String atom = formula.substring(string.length() - 1);
+            return checkAgentConsidersPossibility(agent, state, atom);
         }
         return false;
     }
@@ -92,26 +114,46 @@ public class ModelCreator {
     public static boolean checkAgentKnowledge(String agent, State state, String atom) {
         Agent a = model.findAgentInModel(agent);
         if(a == null) return false;
-        ArrayList<State> statesToCheckForAgent = new ArrayList<>();
-
-        for(int i = 0; i < state.getRelationsStates().size(); i++) {
-            if(model.checkAgentRelationForStateByObject(state.getRelationsStates().get(i), a)) {
-                statesToCheckForAgent.add(state.getRelationsStates().get(i));
-            }
-        }
+        ArrayList<State> statesToCheckForAgent = statesToCheckForAgents(state, a);
 
         for(int i = 0; i < statesToCheckForAgent.size(); i++) {
-            if(!(state.getRelationsStates().get(i).checkAtomTrueInState(atom))) return false;
+            if(!(statesToCheckForAgent.get(i).checkAtomTrueInState(atom))) return false;
+        }
+
+        for(int j = 0; j < statesToCheckForAgent.size(); j++) {
+            System.out.println("STATES TO CHECK");
+            System.out.println(statesToCheckForAgent.get(j).getName());
         }
 
         return true;
+    }
+
+    public static boolean checkAgentConsidersPossibility(String agent, State state, String atom) {
+        Agent a = model.findAgentInModel(agent);
+        if (a == null) return false;
+
+        ArrayList<State> statesToCheckForAgent = statesToCheckForAgents(state, a);
+
+        for(int i = 0; i < statesToCheckForAgent.size(); i++) {
+            if(statesToCheckForAgent.get(i).checkAtomTrueInState(atom)) return true;
+        }
+
+        return false;
+    }
+
+    public static ArrayList<State> statesToCheckForAgents(State state, Agent agent) {
+        ArrayList<State> statesToCheckForAgent = model.checkAgentRelationForStateByObject(state, agent);
+
+        return statesToCheckForAgent;
     }
 
     public static void main(String [] args) {
         Model model = new Model("Model-1");
         ModelCreator createModel = new ModelCreator(model);
         //createModel.unwind();
-        System.out.println(checkModelForFormula(model.getStatesInModel().get(0), "bill knows p"));
+        //System.out.println(checkModelForFormula(model.getStatesInModel().get(0), "bill knows p"));
         //System.out.println(checkModelForFormula(model.getStatesInModel().get(0), "p and q"));
+        //System.out.println(checkModelForFormula(model.getStatesInModel().get(0), "ann considers q"));
+        //System.out.println(model.getStatesInModel().get(1).getRelations());
     }
 }

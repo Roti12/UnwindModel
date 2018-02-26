@@ -42,15 +42,18 @@ public class Model {
         return false;
     }
 
-    public boolean checkAgentRelationForStateByObject(State state, Agent agent) {
+    public ArrayList<State> checkAgentRelationForStateByObject(State stateToCheck, Agent agent) {
         String agentName = agent.getName().toLowerCase();
-        if((state.getRelationsStates() == null) || (state.getRelationsStates().isEmpty())) return false;
+        ArrayList<State> statesWithAgentRelations = new ArrayList<>();
+        if((stateToCheck.getRelationsStates() == null) || (stateToCheck.getRelationsStates().isEmpty())) return null;
 
-        for(int i = 0; i < state.getRelationsStates().size(); i++) {
-            if(state.getRelations().get(i).getAgent().getName().toLowerCase().equals(agentName)) return true;
+        for(int i = 0; i < stateToCheck.getRelations().size(); i++) {
+            if(stateToCheck.getRelations().get(i).getAgent().getName().toLowerCase().equals(agentName)){
+                statesWithAgentRelations.add(stateToCheck.getRelations().get(i).getState());
+            }
         }
 
-        return false;
+        return statesWithAgentRelations;
     }
 
     public Agent findAgentInModel(String string) {
